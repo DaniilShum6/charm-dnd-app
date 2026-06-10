@@ -23,14 +23,25 @@ jobs:
           flutter-version: "3.32.5"
           channel: "stable"
 
+      - name: Create fresh Flutter project
+        run: flutter create -t app charm_fixed
+
+      - name: Copy project files
+        run: |
+          cp -r lib charm_fixed/
+          cp pubspec.yaml charm_fixed/
+          if [ -d assets ]; then cp -r assets charm_fixed/; fi
+
       - name: Install dependencies
         run: flutter pub get
+        working-directory: charm_fixed
 
       - name: Build APK
         run: flutter build apk --release
+        working-directory: charm_fixed
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: charm-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: charm_fixed/build/app/outputs/flutter-apk/app-release.apk
